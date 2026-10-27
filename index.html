@@ -110,7 +110,7 @@
         </div>
     </div>
 
-    <!-- Upload Modal with Format Selection -->
+    <!-- Upload Modal -->
     <div id="uploadModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
@@ -162,7 +162,7 @@
         </div>
     </footer>
 
-    <!-- App Script with Reels Feed -->
+    <!-- Core JavaScript Logic -->
     <script>
         const SUPABASE_URL = 'https://oemydtxwalfjmluzykmr.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_gK1skiPXPysYi9wOiFjQzg_0vYEmg3I';
@@ -181,10 +181,12 @@
         function initTheme() {
             if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
-                document.getElementById('themeIcon').innerText = '☀️';
+                let icon = document.getElementById('themeIcon');
+                if (icon) icon.innerText = '☀️';
             } else {
                 document.documentElement.classList.remove('dark');
-                document.getElementById('themeIcon').innerText = '🌙';
+                let icon = document.getElementById('themeIcon');
+                if (icon) icon.innerText = '🌙';
             }
         }
 
@@ -210,7 +212,7 @@
                 updateAuthUI();
                 fetchVideosFromCloud();
             } else {
-                openAuthModal('login', true);
+                openAuthModal('login');
             }
         }
 
@@ -244,7 +246,8 @@
                     .select('*, profiles(username, avatar_url)')
                     .order('created_at', { ascending: false });
 
-                document.getElementById('loadingState').style.display = 'none';
+                let loadingEl = document.getElementById('loadingState');
+                if (loadingEl) loadingEl.style.display = 'none';
                 if (error) { console.error(error); return; }
                 allVideos = data || [];
                 renderFeed();
@@ -255,6 +258,7 @@
 
         async function renderFeed(videosToRender = null) {
             let feed = document.getElementById('videoFeed');
+            if (!feed) return;
             feed.innerHTML = '';
 
             let list = videosToRender || allVideos;
@@ -272,8 +276,4 @@
                     let matchesSearch = v.title.toLowerCase().includes(query) || 
                                         creatorName.toLowerCase().includes(query) || 
                                         (v.description && v.description.toLowerCase().includes(query));
-                    return matchesCategory && matchesSearch;
-                });
-
-                if (currentCategory === 'Trending') {
-                    list.sort((a, b) => (b.likes
+                    return matchesCategory
