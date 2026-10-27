@@ -38,6 +38,9 @@
             </div>
 
             <div class="flex items-center space-x-3">
+                <button onclick="showNotifications()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all" title="Notifications">
+                    <span>🔔</span>
+                </button>
                 <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all" title="Toggle Theme">
                     <span id="themeIcon">🌙</span>
                 </button>
@@ -53,12 +56,13 @@
             <a href="#" onclick="goHome()" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gold-50 dark:bg-gold-500/10 text-gold-600 font-semibold"><span>🏠</span> <span>Home Feed</span></a>
             <a href="#" onclick="filterByCategory('Trending')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔥</span> <span>Trending</span></a>
             <a href="#" onclick="showSavedVideos()" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔖</span> <span>Saved Posts</span></a>
+            <a href="#" onclick="showNotifications()" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔔</span> <span>Activity Feed</span></a>
             <a href="#" onclick="filterByCategory('Cinematic')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🎬</span> <span>Cinematic</span></a>
             <a href="#" onclick="filterByCategory('Technology')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>💻</span> <span>Technology</span></a>
             <a href="#" onclick="filterByCategory('Vlogs')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🎥</span> <span>Vlogs</span></a>
         </aside>
 
-        <!-- Media Feed / Profile View -->
+        <!-- Media Feed / Profile / Notifications View -->
         <section class="col-span-1 lg:col-span-3 space-y-6">
             <div id="feedHeader" class="flex items-center space-x-2 overflow-x-auto pb-2">
                 <button onclick="filterByCategory('All')" class="category-btn bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap">All</button>
@@ -104,7 +108,7 @@
         </div>
     </div>
 
-    <!-- Upload Modal with Description Field -->
+    <!-- Upload Modal -->
     <div id="uploadModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
@@ -147,7 +151,7 @@
         </div>
     </footer>
 
-    <!-- Script with Descriptions & Hashtag Support -->
+    <!-- Script with Activity Notifications -->
     <script>
         const SUPABASE_URL = 'https://oemydtxwalfjmluzykmr.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_gK1skiPXPysYi9wOiFjQzg_0vYEmg3I';
@@ -283,9 +287,4 @@
                     </div>
                     <div class="p-4 space-y-3">
                         <div class="flex space-x-3 items-start">
-                            <div onclick="viewProfile('${creatorName}')" class="w-10 h-10 rounded-full bg-gold-500 text-white flex items-center justify-center font-bold flex-shrink-0 cursor-pointer hover:bg-gold-600 overflow-hidden">
-                                ${v.profiles && v.profiles.avatar_url ? `<img src="${v.profiles.avatar_url}" class="w-full h-full object-cover">` : creatorName.charAt(0).toUpperCase()}
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h3 class="font-semibold text-gray-900 dark:text-white line-clamp-2 leading-snug">${v.title}</h3>
-                                <p onclick="v
+                            <div onclick="viewProfile('${creatorName}')" class="w-10 h-10 roun
