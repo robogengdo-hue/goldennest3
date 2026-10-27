@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GoldenNest - Creator Media Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -30,7 +32,7 @@
             <!-- Search Bar -->
             <div class="hidden md:flex flex-1 max-w-md mx-8">
                 <div class="relative w-full">
-                    <input type="text" id="searchInput" oninput="searchVideos()" placeholder="Search creators or videos..." class="w-full bg-gray-100 border border-gray-200 rounded-full py-2 pl-4 pr-10 text-sm focus:outline-none focus:border-gold-500 focus:bg-white transition-all">
+                    <input type="text" id="searchInput" oninput="searchVideos()" placeholder="Search cloud videos or creators..." class="w-full bg-gray-100 border border-gray-200 rounded-full py-2 pl-4 pr-10 text-sm focus:outline-none focus:border-gold-500 focus:bg-white transition-all">
                     <span class="absolute right-3 top-2.5 text-gray-400">🔍</span>
                 </div>
             </div>
@@ -61,6 +63,9 @@
                 <button onclick="filterByCategory('Vlogs')" class="category-btn bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Vlogs</button>
             </div>
 
+            <!-- Loading State -->
+            <div id="loadingState" class="text-center py-12 text-gray-400">Connecting to Supabase cloud database...</div>
+
             <!-- Dynamic Video Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" id="videoFeed"></div>
         </section>
@@ -70,13 +75,13 @@
     <div id="uploadModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-gray-100 pb-3">
-                <h3 class="text-lg font-bold text-gray-900">Upload Video to GoldenNest</h3>
+                <h3 class="text-lg font-bold text-gray-900">Upload to Cloud</h3>
                 <button onclick="closeUploadModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
             </div>
-            <form id="uploadForm" onsubmit="handleUpload(event)" class="space-y-3">
+            <form id="uploadForm" onsubmit="handleCloudUpload(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Video Title</label>
-                    <input type="text" id="videoTitle" required placeholder="e.g. My Cinematic Teaser" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gold-500">
+                    <input type="text" id="videoTitle" required placeholder="e.g. Cinematic Teaser" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gold-500">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Creator Name</label>
@@ -96,7 +101,7 @@
                 </div>
                 <div class="pt-2 flex space-x-3">
                     <button type="button" onclick="closeUploadModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-semibold">Cancel</button>
-                    <button type="submit" class="flex-1 bg-gold-500 hover:bg-gold-600 text-white py-2.5 rounded-xl text-sm font-semibold shadow-sm">Publish Video</button>
+                    <button type="submit" id="submitBtn" class="flex-1 bg-gold-500 hover:bg-gold-600 text-white py-2.5 rounded-xl text-sm font-semibold shadow-sm">Publish to Cloud</button>
                 </div>
             </form>
         </div>
@@ -105,63 +110,56 @@
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 py-6 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center text-sm text-gray-500">
-            &copy; 2026 GoldenNest. Built for creators worldwide.
+            &copy; 2026 GoldenNest. Powered by Supabase Cloud.
         </div>
     </footer>
 
-    <!-- JavaScript Application Logic -->
+    <!-- Supabase Integration Script -->
     <script>
-        let defaultVideos = [
-            {
-                id: 1,
-                title: "Building the Future of Digital Media Hubs",
-                creator: "GoldenNest Creator",
-                category: "Technology",
-                url: "https://www.w3schools.com/html/mov_bbb.mp4",
-                time: "2 hours ago",
-                views: "1,240 views",
-                likes: 142,
-                liked: false
-            },
-            {
-                id: 2,
-                title: "Cinematic Visuals & Dark Aesthetic Masterclass",
-                creator: "Mr. Psycho",
-                category: "Cinematic",
-                url: "https://www.w3schools.com/html/mov_bbb.mp4",
-                time: "1 day ago",
-                views: "3,410 views",
-                likes: 389,
-                liked: false
-            }
-        ];
+        const SUPABASE_URL = 'https://oemydtxwalfjmluzykmr.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_gK1skiPXPysYi9wOiFjQzg_0vYEmg3I';
+        
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        let allVideos = [];
         let currentCategory = 'All';
         let searchQuery = '';
 
-        function getVideos() {
-            let stored = localStorage.getItem('goldennest_public_videos');
-            return stored ? JSON.parse(stored) : defaultVideos;
-        }
+        async function fetchVideosFromCloud() {
+            try {
+                let { data, error } = await _supabase
+                    .from('videos')
+                    .select('*')
+                    .order('created_at', { ascending: false });
 
-        function saveVideos(videos) {
-            localStorage.setItem('goldennest_public_videos', JSON.stringify(videos));
+                document.getElementById('loadingState').style.display = 'none';
+
+                if (error) {
+                    console.error('Error fetching:', error);
+                    return;
+                }
+
+                allVideos = data || [];
+                renderFeed();
+            } catch (err) {
+                console.error('Connection error:', err);
+                document.getElementById('loadingStateinnerText = "Failed to connect to cloud database."';
+            }
         }
 
         function renderFeed() {
             let feed = document.getElementById('videoFeed');
-            let videos = getVideos();
             feed.innerHTML = '';
 
-            // Filter by Category and Search Query
-            let filtered = videos.filter(v => {
+            let filtered = allVideos.filter(v => {
                 let matchesCategory = (currentCategory === 'All' || v.category === currentCategory || v.creator === currentCategory);
                 let matchesSearch = v.title.toLowerCase().includes(searchQuery.toLowerCase()) || v.creator.toLowerCase().includes(searchQuery.toLowerCase());
                 return matchesCategory && matchesSearch;
             });
 
             if (filtered.length === 0) {
-                feed.innerHTML = `<div class="col-span-2 text-center py-12 text-gray-400">No videos found. Try uploading one or clearing your search!</div>`;
+                feed.innerHTML = `<div class="col-span-2 text-center py-12 text-gray-400">No cloud videos found. Be the first to publish one!</div>`;
                 return;
             }
 
@@ -173,17 +171,17 @@
                         <video src="${v.url}" controls preload="metadata" class="w-full h-full object-cover"></video>
                     </div>
                     <div class="p-4 flex space-x-3">
-                        <div onclick="filterByCreator('${v.creator}')" class="w-10 h-10 rounded-full bg-gold-500 text-white flex items-center justify-center font-bold flex-shrink-0 cursor-pointer hover:bg-gold-600" title="View creator channel">
+                        <div onclick="filterByCreator('${v.creator}')" class="w-10 h-10 rounded-full bg-gold-500 text-white flex items-center justify-center font-bold flex-shrink-0 cursor-pointer hover:bg-gold-600">
                             ${v.creator.charAt(0).toUpperCase()}
                         </div>
                         <div class="flex-1">
                             <h3 class="font-semibold text-gray-900 line-clamp-2 leading-snug">${v.title}</h3>
                             <p onclick="filterByCreator('${v.creator}')" class="text-sm text-gold-600 font-medium mt-1 cursor-pointer hover:underline">${v.creator}</p>
                             <div class="flex items-center justify-between text-xs text-gray-400 mt-2">
-                                <span>${v.views} • ${v.time}</span>
-                                <button onclick="toggleLike(${v.id})" class="flex items-center space-x-1 px-2.5 py-1 rounded-full border ${v.liked ? 'bg-red-50 border-red-200 text-red-600' : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'} transition-all">
-                                    <span>${v.liked ? '❤️' : '🤍'}</span>
-                                    <span class="font-semibold">${v.likes}</span>
+                                <span>1 view • Just now</span>
+                                <button onclick="handleLike(${v.id}, ${v.likes || 0})" class="flex items-center space-x-1 px-2.5 py-1 rounded-full border bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100 transition-all">
+                                    <span>🤍</span>
+                                    <span class="font-semibold">${v.likes || 0}</span>
                                 </button>
                             </div>
                         </div>
@@ -191,6 +189,49 @@
                 `;
                 feed.appendChild(card);
             });
+        }
+
+        async function handleLike(id, currentLikes) {
+            let newLikes = currentLikes + 1;
+            let { error } = await _supabase
+                .from('videos')
+                .update({ likes: newLikes })
+                .eq('id', id);
+
+            if (!error) {
+                fetchVideosFromCloud();
+            }
+        }
+
+        async function handleCloudUpload(event) {
+            event.preventDefault();
+            let submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "Publishing to Cloud...";
+            submitBtn.disabled = true;
+
+            let newVideo = {
+                title: document.getElementById('videoTitle').value,
+                creator: document.getElementById('creatorName').value,
+                category: document.getElementById('videoCategory').value,
+                url: document.getElementById('videoUrl').value,
+                likes: 0
+            };
+
+            let { error } = await _supabase
+                .from('videos')
+                .insert([newVideo]);
+
+            submitBtn.innerText = "Publish to Cloud";
+            submitBtn.disabled = false;
+
+            if (error) {
+                alert('Upload failed: ' + error.message);
+                return;
+            }
+
+            document.getElementById('uploadForm').reset();
+            closeUploadModal();
+            fetchVideosFromCloud();
         }
 
         function filterByCategory(cat) {
@@ -210,51 +251,10 @@
             renderFeed();
         }
 
-        function toggleLike(id) {
-            let videos = getVideos();
-            let video = videos.find(v => v.id === id);
-            if (video) {
-                if (video.liked) {
-                    video.likes -= 1;
-                    video.liked = false;
-                } else {
-                    video.likes += 1;
-                    video.liked = true;
-                }
-                saveVideos(videos);
-                renderFeed();
-            }
-        }
-
         function openUploadModal() { document.getElementById('uploadModal').classList.remove('hidden'); }
         function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); }
 
-        function handleUpload(event) {
-            event.preventDefault();
-            let videos = getVideos();
-            
-            let newVideo = {
-                id: Date.now(),
-                title: document.getElementById('videoTitle').value,
-                creator: document.getElementById('creatorName').value,
-                category: document.getElementById('videoCategory').value,
-                url: document.getElementById('videoUrl').value,
-                time: "Just now",
-                views: "1 view",
-                likes: 0,
-                liked: false
-            };
-
-            videos.unshift(newVideo);
-            saveVideos(videos);
-
-            document.getElementById('uploadForm').reset();
-            closeUploadModal();
-            currentCategory = 'All';
-            renderFeed();
-        }
-
-        window.onload = renderFeed;
+        window.onload = fetchVideosFromCloud;
     </script>
 </body>
 </html>
