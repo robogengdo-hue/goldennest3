@@ -32,7 +32,7 @@
             <!-- Search Bar -->
             <div class="hidden md:flex flex-1 max-w-md mx-8">
                 <div class="relative w-full">
-                    <input type="text" id="searchInput" oninput="searchVideos()" placeholder="Search cloud videos or creators..." class="w-full bg-gray-100 border border-gray-200 rounded-full py-2 pl-4 pr-10 text-sm focus:outline-none focus:border-gold-500 focus:bg-white transition-all">
+                    <input type="text" id="searchInput" oninput="searchVideos()" placeholder="Search videos or creators..." class="w-full bg-gray-100 border border-gray-200 rounded-full py-2 pl-4 pr-10 text-sm focus:outline-none focus:border-gold-500 focus:bg-white transition-all">
                     <span class="absolute right-3 top-2.5 text-gray-400">🔍</span>
                 </div>
             </div>
@@ -62,9 +62,6 @@
                 <button onclick="filterByCategory('Technology')" class="category-btn bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Technology</button>
                 <button onclick="filterByCategory('Vlogs')" class="category-btn bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Vlogs</button>
             </div>
-
-            <!-- Loading State -->
-            <div id="loadingState" class="text-center py-12 text-gray-400">Connecting to Supabase cloud database...</div>
 
             <!-- Dynamic Video Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" id="videoFeed"></div>
@@ -114,13 +111,32 @@
         </div>
     </footer>
 
-    <!-- Supabase Integration Script -->
+    <!-- Script with Instant Fallback -->
     <script>
         const SUPABASE_URL = 'https://oemydtxwalfjmluzykmr.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_gK1skiPXPysYi9wOiFjQzg_0vYEmg3I';
         
         const { createClient } = supabase;
         const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let defaultVideos = [
+            {
+                id: 1,
+                title: "Building the Future of Digital Media Hubs",
+                creator: "GoldenNest Creator",
+                category: "Technology",
+                url: "https://www.w3schools.com/html/mov_bbb.mp4",
+                likes: 142
+            },
+            {
+                id: 2,
+                title: "Cinematic Visuals & Dark Aesthetic Masterclass",
+                creator: "Mr. Psycho",
+                category: "Cinematic",
+                url: "https://www.w3schools.com/html/mov_bbb.mp4",
+                likes: 389
+            }
+        ];
 
         let allVideos = [];
         let currentCategory = 'All';
@@ -133,18 +149,15 @@
                     .select('*')
                     .order('created_at', { ascending: false });
 
-                document.getElementById('loadingState').style.display = 'none';
-
-                if (error) {
-                    console.error('Error fetching:', error);
-                    return;
+                if (error || !data || data.length === 0) {
+                    allVideos = defaultVideos; // Fallback if empty or offline
+                } else {
+                    allVideos = data;
                 }
-
-                allVideos = data || [];
                 renderFeed();
             } catch (err) {
-                console.error('Connection error:', err);
-                document.getElementById('loadingStateinnerText = "Failed to connect to cloud database."';
+                allVideos = defaultVideos; // Instant fallback on network error
+                renderFeed();
             }
         }
 
@@ -159,7 +172,7 @@
             });
 
             if (filtered.length === 0) {
-                feed.innerHTML = `<div class="col-span-2 text-center py-12 text-gray-400">No cloud videos found. Be the first to publish one!</div>`;
+                feed.innerHTML = `<div class="col-span-2 text-center py-12 text-gray-400">No videos found.</div>`;
                 return;
             }
 
