@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GoldenNest - Creator Media Hub</title>
-    <!-- Tailwind CSS CDN for rapid styling -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -80,60 +80,47 @@
         <!-- Media Feed -->
         <section class="col-span-1 lg:col-span-3 space-y-6">
             <!-- Category Pills -->
-            <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none">
+            <div class="flex items-center space-x-2 overflow-x-auto pb-2">
                 <button class="bg-gray-900 text-white px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap">All</button>
                 <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Cinematic</button>
                 <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Technology</button>
                 <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Vlogs</button>
-                <button class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Music & Art</button>
             </div>
 
-            <!-- Video Grid -->
+            <!-- Dynamic Video Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" id="videoFeed">
-                
-                <!-- Sample Card 1 -->
-                <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col">
-                    <div class="aspect-video bg-gray-200 relative flex items-center justify-center text-gray-400">
-                        <span class="text-3xl">▶️</span>
-                        <span class="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-0.5 rounded">12:45</span>
-                    </div>
-                    <div class="p-4 flex space-x-3">
-                        <div class="w-10 h-10 rounded-full bg-gold-500 text-white flex items-center justify-center font-bold flex-shrink-0">
-                            C
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900 line-clamp-2 leading-snug">Building the Future of Digital Media Hubs from Scratch</h3>
-                            <p class="text-sm text-gray-500 mt-1">GoldenNest Creator</p>
-                            <div class="flex items-center space-x-2 text-xs text-gray-400 mt-1">
-                                <span>1.2K views</span> • <span>2 hours ago</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sample Card 2 -->
-                <div class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col">
-                    <div class="aspect-video bg-gray-200 relative flex items-center justify-center text-gray-400">
-                        <span class="text-3xl">▶️</span>
-                        <span class="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-0.5 rounded">05:30</span>
-                    </div>
-                    <div class="p-4 flex space-x-3">
-                        <div class="w-10 h-10 rounded-full bg-gold-500 text-white flex items-center justify-center font-bold flex-shrink-0">
-                            M
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-semibold text-gray-900 line-clamp-2 leading-snug">Cinematic Visuals & Dark Aesthetic Masterclass</h3>
-                            <p class="text-sm text-gray-500 mt-1">Mr. Psycho</p>
-                            <div class="flex items-center space-x-2 text-xs text-gray-400 mt-1">
-                                <span>3.4K views</span> • <span>1 day ago</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+                <!-- Videos injected dynamically via JavaScript -->
             </div>
         </section>
     </main>
+
+    <!-- Upload Modal (Hidden by default) -->
+    <div id="uploadModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                <h3 class="text-lg font-bold text-gray-900">Upload to GoldenNest</h3>
+                <button onclick="closeUploadModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
+            </div>
+            <form id="uploadForm" onsubmit="handleUpload(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Video Title</label>
+                    <input type="text" id="videoTitle" required placeholder="e.g. My Cinematic Masterpiece" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gold-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Creator Name</label>
+                    <input type="text" id="creatorName" required placeholder="e.g. Mr. Psycho" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gold-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Duration</label>
+                    <input type="text" id="videoDuration" required placeholder="e.g. 10:20" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gold-500">
+                </div>
+                <div class="pt-2 flex space-x-3">
+                    <button type="button" onclick="closeUploadModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-semibold transition-all">Cancel</button>
+                    <button type="submit" class="flex-1 bg-gold-500 hover:bg-gold-600 text-white py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm">Publish Video</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 py-6 mt-auto">
@@ -142,11 +129,104 @@
         </div>
     </footer>
 
-    <!-- Simple JavaScript for Interactivity -->
+    <!-- JavaScript for Dynamic Feed & Local Storage -->
     <script>
-        function openUploadModal() {
-            alert("Upload Studio modal will open here! You can hook this up to your video storage backend later.");
+        // Initial default videos if local storage is empty
+        let defaultVideos = [
+            {
+                title: "Building the Future of Digital Media Hubs from Scratch",
+                creator: "GoldenNest Creator",
+                duration: "12:45",
+                time: "2 hours ago",
+                views: "1.2K views",
+                initial: "C"
+            },
+            {
+                title: "Cinematic Visuals & Dark Aesthetic Masterclass",
+                creator: "Mr. Psycho",
+                duration: "05:30",
+                time: "1 day ago",
+                views: "3.4K views",
+                initial: "M"
+            }
+        ];
+
+        // Load videos from localStorage or use defaults
+        function getVideos() {
+            let stored = localStorage.getItem('goldennest_videos');
+            return stored ? JSON.parse(stored) : defaultVideos;
         }
+
+        // Render feed
+        function renderFeed() {
+            let feed = document.getElementById('videoFeed');
+            let videos = getVideos();
+            feed.innerHTML = '';
+
+            videos.forEach(v => {
+                let card = document.createElement('div');
+                card.className = "bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col";
+                card.innerHTML = `
+                    <div class="aspect-video bg-gray-200 relative flex items-center justify-center text-gray-400">
+                        <span class="text-3xl">▶️</span>
+                        <span class="absolute bottom-2 right-2 bg-black/75 text-white text-xs px-2 py-0.5 rounded">${v.duration}</span>
+                    </div>
+                    <div class="p-4 flex space-x-3">
+                        <div class="w-10 h-10 rounded-full bg-gold-500 text-white flex items-center justify-center font-bold flex-shrink-0">
+                            ${v.initial || v.creator.charAt(0)}
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-900 line-clamp-2 leading-snug">${v.title}</h3>
+                            <p class="text-sm text-gray-500 mt-1">${v.creator}</p>
+                            <div class="flex items-center space-x-2 text-xs text-gray-400 mt-1">
+                                <span>${v.views}</span> • <span>${v.time}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                feed.appendChild(card);
+            });
+        }
+
+        // Modal Controls
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.remove('hidden');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.add('hidden');
+        }
+
+        // Handle Form Submission
+        function handleUpload(event) {
+            event.preventDefault();
+            let title = document.getElementById('videoTitle').value;
+            let creator = document.getElementById('creatorName').value;
+            let duration = document.getElementById('videoDuration').value;
+
+            let newVideo = {
+                title: title,
+                creator: creator,
+                duration: duration,
+                time: "Just now",
+                views: "1 view",
+                initial: creator.charAt(0).toUpperCase()
+            };
+
+            let videos = getVideos();
+            videos.unshift(newVideo); // Add to the top of the array
+            localStorage.setItem('goldennest_videos', JSON.stringify(videos));
+
+            // Reset form and close modal
+            document.getElementById('uploadForm').reset();
+            closeUploadModal();
+
+            // Refresh feed
+            renderFeed();
+        }
+
+        // Run on page load
+        window.onload = renderFeed;
     </script>
 </body>
 </html>
