@@ -37,11 +37,8 @@
             </div>
 
             <div class="flex items-center space-x-4">
-                <button onclick="openUploadModal()" id="uploadNavBtn" class="hidden bg-gold-500 hover:bg-gold-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all">+ Create</button>
-                <div id="authNavArea">
-                    <button onclick="openAuthModal('login')" class="text-sm font-semibold text-gray-700 hover:text-gold-600 px-3 py-2">Sign In</button>
-                    <button onclick="openAuthModal('signup')" class="bg-gold-500 hover:bg-gold-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all">Sign Up</button>
-                </div>
+                <button onclick="openUploadModal()" class="bg-gold-500 hover:bg-gold-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all">+ Create</button>
+                <div id="authNavArea" class="flex items-center space-x-3"></div>
             </div>
         </div>
     </header>
@@ -50,6 +47,8 @@
     <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-4 gap-8">
         <aside class="hidden lg:block lg:col-span-1 space-y-2">
             <a href="#" onclick="goHome()" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gold-50 text-gold-600 font-semibold"><span>🏠</span> <span>Home Feed</span></a>
+            <a href="#" onclick="filterByCategory('Trending')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-600 font-medium"><span>🔥</span> <span>Trending</span></a>
+            <a href="#" onclick="showSavedVideos()" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-600 font-medium"><span>🔖</span> <span>Saved Posts</span></a>
             <a href="#" onclick="filterByCategory('Cinematic')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-600 font-medium"><span>🎬</span> <span>Cinematic</span></a>
             <a href="#" onclick="filterByCategory('Technology')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-600 font-medium"><span>💻</span> <span>Technology</span></a>
             <a href="#" onclick="filterByCategory('Vlogs')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-600 font-medium"><span>🎥</span> <span>Vlogs</span></a>
@@ -59,6 +58,7 @@
         <section class="col-span-1 lg:col-span-3 space-y-6">
             <div id="feedHeader" class="flex items-center space-x-2 overflow-x-auto pb-2">
                 <button onclick="filterByCategory('All')" class="category-btn bg-gray-900 text-white px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap">All</button>
+                <button onclick="filterByCategory('Trending')" class="category-btn bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">🔥 Trending</button>
                 <button onclick="filterByCategory('Cinematic')" class="category-btn bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Cinematic</button>
                 <button onclick="filterByCategory('Technology')" class="category-btn bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Technology</button>
                 <button onclick="filterByCategory('Vlogs')" class="category-btn bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Vlogs</button>
@@ -71,12 +71,13 @@
         </section>
     </main>
 
-    <!-- Auth Modal (Sign In / Sign Up) -->
-    <div id="authModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <!-- Auth Modal -->
+    <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b border-gray-100 pb-3">
-                <h3 id="authTitle" class="text-lg font-bold text-gray-900">Sign In to GoldenNest</h3>
-                <button onclick="closeAuthModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
+            <div class="text-center pb-2 border-b border-gray-100">
+                <div class="w-12 h-12 rounded-2xl bg-gold-500 mx-auto flex items-center justify-center text-white font-bold text-2xl shadow-md mb-2">G</div>
+                <h3 id="authTitle" class="text-xl font-bold text-gray-900">Welcome to GoldenNest</h3>
+                <p class="text-xs text-gray-500 mt-1">Sign in or create an account to enter the platform.</p>
             </div>
             <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3">
                 <div id="usernameFieldGroup" class="hidden">
@@ -138,7 +139,7 @@
         </div>
     </footer>
 
-    <!-- Full-Scale Application Script -->
+    <!-- Script with Trending, Bookmarks, and Profile Customization -->
     <script>
         const SUPABASE_URL = 'https://oemydtxwalfjmluzykmr.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_gK1skiPXPysYi9wOiFjQzg_0vYEmg3I';
@@ -149,6 +150,7 @@
         let currentUser = null;
         let currentProfile = null;
         let allVideos = [];
+        let savedVideoIds = new Set();
         let currentCategory = 'All';
         let searchQuery = '';
         let isSignUpMode = false;
@@ -158,9 +160,12 @@
             if (session) {
                 currentUser = session.user;
                 await fetchProfile(currentUser.id);
+                await fetchSavedVideosList();
+                updateAuthUI();
+                fetchVideosFromCloud();
+            } else {
+                openAuthModal('login', true);
             }
-            updateAuthUI();
-            fetchVideosFromCloud();
         }
 
         async function fetchProfile(userId) {
@@ -168,23 +173,20 @@
             currentProfile = data;
         }
 
+        async function fetchSavedVideosList() {
+            if (!currentUser) return;
+            let { data } = await _supabase.from('saved_videos').select('video_id').eq('user_id', currentUser.id);
+            savedVideoIds = new Set(data ? data.map(s => s.video_id) : []);
+        }
+
         function updateAuthUI() {
             let authNavArea = document.getElementById('authNavArea');
-            let uploadNavBtn = document.getElementById('uploadNavBtn');
-
             if (currentUser && currentProfile) {
-                uploadNavBtn.classList.remove('hidden');
                 authNavArea.innerHTML = `
                     <div class="flex items-center space-x-3">
                         <span onclick="viewProfile('${currentProfile.username}')" class="text-sm font-semibold text-gold-600 cursor-pointer hover:underline">@${currentProfile.username}</span>
                         <button onclick="handleLogout()" class="text-xs bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-full text-gray-600 font-medium">Sign Out</button>
                     </div>
-                `;
-            } else {
-                uploadNavBtn.classList.add('hidden');
-                authNavArea.innerHTML = `
-                    <button onclick="openAuthModal('login')" class="text-sm font-semibold text-gray-700 hover:text-gold-600 px-3 py-2">Sign In</button>
-                    <button onclick="openAuthModal('signup')" class="bg-gold-500 hover:bg-gold-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all">Sign Up</button>
                 `;
             }
         }
@@ -193,7 +195,7 @@
             try {
                 let { data, error } = await _supabase
                     .from('videos')
-                    .select('*, profiles(username)')
+                    .select('*, profiles(username, avatar_url)')
                     .order('created_at', { ascending: false });
 
                 document.getElementById('loadingState').style.display = 'none';
@@ -205,25 +207,39 @@
             }
         }
 
-        async function renderFeed() {
+        async function renderFeed(videosToRender = null) {
             let feed = document.getElementById('videoFeed');
             feed.innerHTML = '';
 
-            let filtered = allVideos.filter(v => {
-                let creatorName = v.profiles ? v.profiles.username : v.creator;
-                let matchesCategory = (currentCategory === 'All' || v.category === currentCategory || creatorName === currentCategory);
-                let matchesSearch = v.title.toLowerCase().includes(searchQuery.toLowerCase()) || creatorName.toLowerCase().includes(searchQuery.toLowerCase());
-                return matchesCategory && matchesSearch;
-            });
+            let list = videosToRender || allVideos;
 
-            if (filtered.length === 0) {
+            if (!videosToRender) {
+                list = allVideos.filter(v => {
+                    let creatorName = v.profiles ? v.profiles.username : v.creator;
+                    let matchesCategory = true;
+                    if (currentCategory === 'Trending') {
+                        // Trending criteria: sorted by likes or category filter
+                    } else if (currentCategory !== 'All') {
+                        matchesCategory = (v.category === currentCategory || creatorName === currentCategory);
+                    }
+                    let matchesSearch = v.title.toLowerCase().includes(searchQuery.toLowerCase()) || creatorName.toLowerCase().includes(searchQuery.toLowerCase());
+                    return matchesCategory && matchesSearch;
+                });
+
+                if (currentCategory === 'Trending') {
+                    list.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+                }
+            }
+
+            if (list.length === 0) {
                 feed.innerHTML = `<div class="col-span-2 text-center py-12 text-gray-400">No videos found.</div>`;
                 return;
             }
 
-            for (let v of filtered) {
+            for (let v of list) {
                 let creatorName = v.profiles ? v.profiles.username : v.creator;
                 let isOwner = currentUser && v.user_id === currentUser.id;
+                let isSaved = savedVideoIds.has(v.id);
 
                 let card = document.createElement('div');
                 card.className = "bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col";
@@ -233,8 +249,8 @@
                     </div>
                     <div class="p-4 space-y-3">
                         <div class="flex space-x-3 items-start">
-                            <div onclick="viewProfile('${creatorName}')" class="w-10 h-10 rounded-full bg-gold-500 text-white flex items-center justify-center font-bold flex-shrink-0 cursor-pointer hover:bg-gold-600">
-                                ${creatorName.charAt(0).toUpperCase()}
+                            <div onclick="viewProfile('${creatorName}')" class="w-10 h-10 rounded-full bg-gold-500 text-white flex items-center justify-center font-bold flex-shrink-0 cursor-pointer hover:bg-gold-600 overflow-hidden">
+                                ${v.profiles && v.profiles.avatar_url ? `<img src="${v.profiles.avatar_url}" class="w-full h-full object-cover">` : creatorName.charAt(0).toUpperCase()}
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h3 class="font-semibold text-gray-900 line-clamp-2 leading-snug">${v.title}</h3>
@@ -247,6 +263,9 @@
                                 <button onclick="handleLike(${v.id}, ${v.likes || 0})" class="flex items-center space-x-1 px-2.5 py-1 rounded-full border bg-gray-50 border-gray-200 hover:bg-gray-100 transition-all">
                                     <span>❤️</span> <span class="font-semibold">${v.likes || 0}</span>
                                 </button>
+                                <button onclick="toggleSave(${v.id})" class="px-2.5 py-1 rounded-full border ${isSaved ? 'bg-gold-50 border-gold-500 text-gold-600' : 'bg-gray-50 border-gray-200 text-gray-600'} hover:bg-gray-100 transition-all">
+                                    ${isSaved ? '🔖 Saved' : '🔖 Save'}
+                                </button>
                                 <button onclick="shareVideo('${v.url}', '${v.title}')" class="hover:text-gold-600">🔗 Share</button>
                             </div>
                             ${isOwner ? `<button onclick="deleteVideo(${v.id})" class="text-red-500 hover:underline">Delete</button>` : ''}
@@ -255,12 +274,10 @@
                         <!-- Comments Section -->
                         <div class="space-y-2 pt-2 border-t border-gray-100">
                             <div id="comments-${v.id}" class="space-y-1.5 max-h-32 overflow-y-auto text-xs"></div>
-                            ${currentUser ? `
-                                <form onsubmit="postComment(event, ${v.id})" class="flex space-x-2">
-                                    <input type="text" id="comment-input-${v.id}" placeholder="Add a comment..." required class="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-gold-500">
-                                    <button type="submit" class="bg-gold-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">Post</button>
-                                </form>
-                            ` : `<p class="text-xs text-gray-400 italic">Sign in to comment.</p>`}
+                            <form onsubmit="postComment(event, ${v.id})" class="flex space-x-2">
+                                <input type="text" id="comment-input-${v.id}" placeholder="Add a comment..." required class="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-gold-500">
+                                <button type="submit" class="bg-gold-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold">Post</button>
+                            </form>
                         </div>
                     </div>
                 `;
@@ -269,57 +286,31 @@
             }
         }
 
-        async function loadComments(videoId) {
-            let container = document.getElementById(`comments-${videoId}`);
-            if (!container) return;
-
-            let { data } = await _supabase.from('comments').select('*').eq('video_id', videoId).order('created_at', { ascending: true });
-            container.innerHTML = '';
-
-            if (data && data.length > 0) {
-                data.forEach(c => {
-                    let div = document.createElement('div');
-                    div.className = "text-gray-700 bg-gray-50 px-2.5 py-1 rounded-lg";
-                    div.innerHTML = `<span class="font-semibold text-gold-600">@${c.username}:</span> ${c.content}`;
-                    container.appendChild(div);
-                });
+        async function toggleSave(videoId) {
+            if (!currentUser) return;
+            if (savedVideoIds.has(videoId)) {
+                await _supabase.from('saved_videos').delete().eq('user_id', currentUser.id).eq('video_id', videoId);
+                savedVideoIds.delete(videoId);
             } else {
-                container.innerHTML = `<span class="text-gray-400">No comments yet.</span>`;
+                await _supabase.from('saved_videos').insert([{ user_id: currentUser.id, video_id: videoId }]);
+                savedVideoIds.add(videoId);
             }
+            renderFeed();
         }
 
-        async function postComment(event, videoId) {
-            event.preventDefault();
-            if (!currentUser || !currentProfile) return;
-
-            let input = document.getElementById(`comment-input-${videoId}`);
-            let content = input.value;
-
-            await _supabase.from('comments').insert([{
-                video_id: videoId,
-                user_id: currentUser.id,
-                username: currentProfile.username,
-                content: content
-            }]);
-
-            input.value = '';
-            loadComments(videoId);
-        }
-
-        async function viewProfile(username) {
+        async function showSavedVideos() {
             document.getElementById('feedHeader').style.display = 'none';
             let feed = document.getElementById('videoFeed');
-            feed.innerHTML = `<div class="col-span-2 text-center py-12 text-gray-400">Loading profile @${username}...</div>`;
+            feed.innerHTML = `<div class="col-span-2 text-center py-12 text-gray-400">Loading saved posts...</div>`;
 
-            let { data: profileData } = await _supabase.from('profiles').select('*').eq('username', username).single();
-            if (!profileData) {
-                feed.innerHTML = `<div class="col-span-2 text-center py-12 text-red-500">User profile not found.</div>`;
-                return;
-            }
-
-            let { data: userVideos } = await _supabase.from('videos').select('*').eq('user_id', profileData.id);
-            let { count: followerCount } = await _supabase.from('follows').select('*', { count: 'exact', head: true }).eq('following_username', username);
+            let { data } = await _supabase.from('saved_videos').select('video_id, videos(*, profiles(username, avatar_url))').eq('user_id', currentUser.id);
             
-            let isFollowing = false;
-            if (currentUser) {
-                let { data: followCheck } = await _supabase.from('follows').select('*').eq('follower_id', currentUser.id).eq('following_username',
+            let savedList = data ? data.map(s => s.videos).filter(v => v !== null) : [];
+            document.getElementById('dynamicContentArea').innerHTML = `
+                <h2 class="text-xl font-bold text-gray-900 mb-4">🔖 Your Saved Posts</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" id="videoFeed"></div>
+            `;
+            renderFeed(savedList);
+        }
+
+        async function loadComments(videoId)
