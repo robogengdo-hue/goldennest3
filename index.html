@@ -162,7 +162,7 @@
         </div>
     </footer>
 
-    <!-- Globally Bound JavaScript Logic -->
+    <!-- Direct Window-Bound JavaScript Logic -->
     <script>
         const SUPABASE_URL = 'https://oemydtxwalfjmluzykmr.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_gK1skiPXPysYi9wOiFjQzg_0vYEmg3I';
@@ -178,7 +178,7 @@
         let searchQuery = '';
         let isSignUpMode = false;
 
-        function initTheme() {
+        window.initTheme = function() {
             if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
                 let icon = document.getElementById('themeIcon');
@@ -188,48 +188,50 @@
                 let icon = document.getElementById('themeIcon');
                 if (icon) icon.innerText = '🌙';
             }
-        }
+        };
 
-        function toggleDarkMode() {
+        window.toggleDarkMode = function() {
             if (document.documentElement.classList.contains('dark')) {
                 document.documentElement.classList.remove('dark');
                 localStorage.theme = 'light';
-                document.getElementById('themeIcon').innerText = '🌙';
+                let icon = document.getElementById('themeIcon');
+                if (icon) icon.innerText = '🌙';
             } else {
                 document.documentElement.classList.add('dark');
                 localStorage.theme = 'dark';
-                document.getElementById('themeIcon').innerText = '☀️';
+                let icon = document.getElementById('themeIcon');
+                if (icon) icon.innerText = '☀️';
             }
-        }
+        };
 
         async function initApp() {
-            initTheme();
+            window.initTheme();
             let { data: { session } } = await _supabase.auth.getSession();
             if (session) {
                 currentUser = session.user;
-                await fetchProfile(currentUser.id);
-                await fetchSavedVideosList();
-                updateAuthUI();
-                fetchVideosFromCloud();
+                await window.fetchProfile(currentUser.id);
+                await window.fetchSavedVideosList();
+                window.updateAuthUI();
+                window.fetchVideosFromCloud();
             } else {
-                openAuthModal('login');
+                window.openAuthModal('login');
             }
         }
 
-        async function fetchProfile(userId) {
+        window.fetchProfile = async function(userId) {
             let { data } = await _supabase.from('profiles').select('*').eq('id', userId).single();
             currentProfile = data;
-        }
+        };
 
-        async function fetchSavedVideosList() {
+        window.fetchSavedVideosList = async function() {
             if (!currentUser) return;
             let { data } = await _supabase.from('saved_videos').select('video_id').eq('user_id', currentUser.id);
             savedVideoIds = new Set(data ? data.map(s => s.video_id) : []);
-        }
+        };
 
-        function updateAuthUI() {
+        window.updateAuthUI = function() {
             let authNavArea = document.getElementById('authNavArea');
-            if (currentUser && currentProfile) {
+            if (currentUser && currentProfile && authNavArea) {
                 authNavArea.innerHTML = `
                     <div class="flex items-center space-x-3">
                         <span onclick="window.viewProfile('${currentProfile.username}')" class="text-sm font-semibold text-gold-600 cursor-pointer hover:underline">@${currentProfile.username}</span>
@@ -237,9 +239,9 @@
                     </div>
                 `;
             }
-        }
+        };
 
-        async function fetchVideosFromCloud() {
+        window.fetchVideosFromCloud = async function() {
             try {
                 let { data, error } = await _supabase
                     .from('videos')
@@ -250,13 +252,13 @@
                 if (loadingEl) loadingEl.style.display = 'none';
                 if (error) { console.error(error); return; }
                 allVideos = data || [];
-                renderFeed();
+                window.renderFeed();
             } catch (err) {
                 console.error(err);
             }
-        }
+        };
 
-        async function renderFeed(videosToRender = null) {
+        window.renderFeed = async function(videosToRender = null) {
             let feed = document.getElementById('videoFeed');
             if (!feed) return;
             feed.innerHTML = '';
@@ -270,7 +272,4 @@
                     if (currentCategory === 'Trending') {
                         // sorted by likes
                     } else if (currentCategory !== 'All') {
-                        matchesCategory = (v.category === currentCategory || creatorName === currentCategory);
-                    }
-                    let query = searchQuery.toLowerCase();
-                    let matchesSearch = v.title.toLowerCase().includes(query) ||
+                        matchesCategory = (v.category === currentCategory || creatorName =
