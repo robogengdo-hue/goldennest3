@@ -19,32 +19,27 @@
         }
     </script>
 </head>
-<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased min-h-screen flex flex-col transition-colors duration-200">
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased min-h-screen flex flex-col">
 
     <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm transition-colors duration-200">
+    <header class="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div onclick="goHome()" class="flex items-center space-x-3 cursor-pointer">
                 <div class="w-10 h-10 rounded-xl bg-gold-500 flex items-center justify-center text-white font-bold text-xl shadow-md">G</div>
                 <span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Golden<span class="text-gold-600">Nest</span></span>
             </div>
 
-            <!-- Search Bar -->
             <div class="hidden md:flex flex-1 max-w-md mx-8">
                 <div class="relative w-full">
-                    <input type="text" id="searchInput" oninput="searchVideos()" placeholder="Search videos, creators, or tags (#)..." class="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full py-2 pl-4 pr-10 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500 transition-all">
+                    <input type="text" id="searchInput" oninput="searchVideos()" placeholder="Search videos or tags..." class="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full py-2 pl-4 pr-10 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500">
                     <span class="absolute right-3 top-2.5 text-gray-400">🔍</span>
                 </div>
             </div>
 
             <div class="flex items-center space-x-3">
-                <button onclick="showNotifications()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all" title="Notifications">
-                    <span>🔔</span>
-                </button>
-                <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all" title="Toggle Theme">
-                    <span id="themeIcon">🌙</span>
-                </button>
-                <button onclick="openUploadModal()" class="bg-gold-500 hover:bg-gold-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all">+ Create</button>
+                <button onclick="showNotifications()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200">🔔</button>
+                <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200"><span id="themeIcon">🌙</span></button>
+                <button onclick="openUploadModal()" class="bg-gold-500 hover:bg-gold-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm">+ Create</button>
                 <div id="authNavArea" class="flex items-center space-x-3"></div>
             </div>
         </div>
@@ -53,25 +48,18 @@
     <!-- Main Content Layout -->
     <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-4 gap-8">
         <aside class="hidden lg:block lg:col-span-1 space-y-2">
-            <a href="javascript:void(0)" onclick="goHome()" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gold-50 dark:bg-gold-500/10 text-gold-600 font-semibold"><span>🏠</span> <span>Home Feed</span></a>
-            <a href="javascript:void(0)" onclick="showReelsFeed()" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>⚡</span> <span>Reels</span></a>
-            <a href="javascript:void(0)" onclick="filterByCategory('Trending')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔥</span> <span>Trending</span></a>
-            <a href="javascript:void(0)" onclick="showSavedVideos()" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔖</span> <span>Saved Posts</span></a>
-            <a href="javascript:void(0)" onclick="showNotifications()" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔔</span> <span>Activity Feed</span></a>
-            <a href="javascript:void(0)" onclick="filterByCategory('Cinematic')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🎬</span> <span>Cinematic</span></a>
-            <a href="javascript:void(0)" onclick="filterByCategory('Technology')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>💻</span> <span>Technology</span></a>
-            <a href="javascript:void(0)" onclick="filterByCategory('Vlogs')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🎥</span> <span>Vlogs</span></a>
+            <a href="#" onclick="goHome(); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gold-50 dark:bg-gold-500/10 text-gold-600 font-semibold"><span>🏠</span> <span>Home Feed</span></a>
+            <a href="#" onclick="showReelsFeed(); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>⚡</span> <span>Reels</span></a>
+            <a href="#" onclick="filterByCategory('Trending'); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔥</span> <span>Trending</span></a>
+            <a href="#" onclick="showSavedVideos(); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔖</span> <span>Saved Posts</span></a>
+            <a href="#" onclick="showNotifications(); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔔</span> <span>Activity Feed</span></a>
         </aside>
 
-        <!-- Media Feed / Profile View -->
         <section class="col-span-1 lg:col-span-3 space-y-6">
             <div id="feedHeader" class="flex items-center space-x-2 overflow-x-auto pb-2">
-                <button onclick="filterByCategory('All')" class="category-btn bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap">All</button>
-                <button onclick="showReelsFeed()" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">⚡ Reels</button>
-                <button onclick="filterByCategory('Trending')" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">🔥 Trending</button>
-                <button onclick="filterByCategory('Cinematic')" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Cinematic</button>
-                <button onclick="filterByCategory('Technology')" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Technology</button>
-                <button onclick="filterByCategory('Vlogs')" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Vlogs</button>
+                <button onclick="filterByCategory('All')" class="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-4 py-1.5 rounded-full text-sm font-medium">All</button>
+                <button onclick="showReelsFeed()" class="bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium">⚡ Reels</button>
+                <button onclick="filterByCategory('Trending')" class="bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium">🔥 Trending</button>
             </div>
 
             <div id="dynamicContentArea" class="space-y-6">
@@ -87,25 +75,22 @@
             <div class="text-center pb-2 border-b border-gray-100 dark:border-gray-800">
                 <div class="w-12 h-12 rounded-2xl bg-gold-500 mx-auto flex items-center justify-center text-white font-bold text-2xl shadow-md mb-2">G</div>
                 <h3 id="authTitle" class="text-xl font-bold text-gray-900 dark:text-white">Welcome to GoldenNest</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Sign in or create an account to enter the platform.</p>
             </div>
             <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3">
                 <div id="usernameFieldGroup" class="hidden">
-                    <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Username / Handle</label>
-                    <input type="text" id="authUsername" placeholder="e.g. mr_psycho" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500">
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Username</label>
+                    <input type="text" id="authUsername" placeholder="e.g. mr_psycho" class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Email</label>
-                    <input type="email" id="authEmail" required placeholder="name@example.com" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500">
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Email</label>
+                    <input type="email" id="authEmail" required placeholder="name@example.com" class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Password</label>
-                    <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500">
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Password</label>
+                    <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm">
                 </div>
-                <div class="pt-2 flex flex-col space-y-2">
-                    <button type="submit" id="authSubmitBtn" class="w-full bg-gold-500 hover:bg-gold-600 text-white py-2.5 rounded-xl text-sm font-semibold shadow-sm">Sign In</button>
-                    <button type="button" onclick="toggleAuthMode()" id="authToggleBtn" class="text-xs text-gold-600 hover:underline text-center">Don't have an account? Sign Up</button>
-                </div>
+                <button type="submit" id="authSubmitBtn" class="w-full bg-gold-500 hover:bg-gold-600 text-white py-2.5 rounded-xl text-sm font-semibold">Sign In</button>
+                <button type="button" onclick="toggleAuthMode()" id="authToggleBtn" class="w-full text-xs text-gold-600 hover:underline text-center">Don't have an account? Sign Up</button>
             </form>
         </div>
     </div>
@@ -113,56 +98,46 @@
     <!-- Upload Modal -->
     <div id="uploadModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white">Upload Video to Cloud</h3>
-                <button type="button" onclick="closeUploadModal()" class="text-gray-400 hover:text-gray-200 font-bold text-lg">&times;</button>
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-lg font-bold">Upload Video</h3>
+                <button onclick="closeUploadModal()" class="text-gray-400 font-bold text-lg">&times;</button>
             </div>
             <form id="uploadForm" onsubmit="handleCloudBucketUpload(event)" class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Video Title</label>
-                    <input type="text" id="videoTitle" required placeholder="e.g. My Masterpiece" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500">
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Title</label>
+                    <input type="text" id="videoTitle" required class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Description & Hashtags</label>
-                    <textarea id="videoDescription" rows="2" placeholder="Write details... use #tags like #cinematic" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500"></textarea>
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Description</label>
+                    <textarea id="videoDescription" rows="2" class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm"></textarea>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Category</label>
-                        <select id="videoCategory" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500">
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Category</label>
+                        <select id="videoCategory" class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm">
                             <option value="Cinematic">Cinematic</option>
                             <option value="Technology">Technology</option>
                             <option value="Vlogs">Vlogs</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Format Type</label>
-                        <select id="videoFormat" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500">
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Format</label>
+                        <select id="videoFormat" class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm">
                             <option value="horizontal">Standard (16:9)</option>
-                            <option value="vertical">Reel / Short (9:16)</option>
+                            <option value="vertical">Reel (9:16)</option>
                         </select>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Select Video File (.mp4)</label>
-                    <input type="file" id="videoFile" accept="video/*" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gold-50 file:text-gold-600 hover:file:bg-gold-100 cursor-pointer">
+                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Video File</label>
+                    <input type="file" id="videoFile" accept="video/*" required class="w-full text-sm">
                 </div>
-                <div class="pt-2 flex space-x-3">
-                    <button type="button" onclick="closeUploadModal()" class="flex-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 py-2.5 rounded-xl text-sm font-semibold">Cancel</button>
-                    <button type="submit" id="submitBtn" class="flex-1 bg-gold-500 hover:bg-gold-600 text-white py-2.5 rounded-xl text-sm font-semibold shadow-sm">Upload Video</button>
-                </div>
+                <button type="submit" id="submitBtn" class="w-full bg-gold-500 text-white py-2.5 rounded-xl text-sm font-semibold">Upload Video</button>
             </form>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-6 mt-auto transition-colors duration-200">
-        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-gray-500 dark:text-gray-400">
-            &copy; 2026 GoldenNest. Full-Scale Creator Network.
-        </div>
-    </footer>
-
-    <!-- Direct Standard Script Injection -->
+    <!-- Core Script -->
     <script>
         const SUPABASE_URL = 'https://oemydtxwalfjmluzykmr.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_gK1skiPXPysYi9wOiFjQzg_0vYEmg3I';
@@ -178,7 +153,7 @@
         let searchQuery = '';
         let isSignUpMode = false;
 
-        function initTheme() {
+        window.initTheme = function() {
             if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
                 let icon = document.getElementById('themeIcon');
@@ -188,9 +163,9 @@
                 let icon = document.getElementById('themeIcon');
                 if (icon) icon.innerText = '🌙';
             }
-        }
+        };
 
-        function toggleDarkMode() {
+        window.toggleDarkMode = function() {
             if (document.documentElement.classList.contains('dark')) {
                 document.documentElement.classList.remove('dark');
                 localStorage.theme = 'light';
@@ -202,10 +177,10 @@
                 let icon = document.getElementById('themeIcon');
                 if (icon) icon.innerText = '☀️';
             }
-        }
+        };
 
         async function initApp() {
-            initTheme();
+            window.initTheme();
             let { data: { session } } = await _supabase.auth.getSession();
             if (session) {
                 currentUser = session.user;
@@ -235,7 +210,7 @@
                 authNavArea.innerHTML = `
                     <div class="flex items-center space-x-3">
                         <span onclick="viewProfile('${currentProfile.username}')" class="text-sm font-semibold text-gold-600 cursor-pointer hover:underline">@${currentProfile.username}</span>
-                        <button onclick="handleLogout()" class="text-xs bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-1.5 rounded-full text-gray-600 dark:text-gray-300 font-medium">Sign Out</button>
+                        <button onclick="handleLogout()" class="text-xs bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full">Sign Out</button>
                     </div>
                 `;
             }
@@ -243,36 +218,101 @@
 
         async function fetchVideosFromCloud() {
             try {
-                let { data, error } = await _supabase
-                    .from('videos')
-                    .select('*, profiles(username, avatar_url)')
-                    .order('created_at', { ascending: false });
-
+                let { data, error } = await _supabase.from('videos').select('*, profiles(username, avatar_url)').order('created_at', { ascending: false });
                 let loadingEl = document.getElementById('loadingState');
                 if (loadingEl) loadingEl.style.display = 'none';
                 if (error) { console.error(error); return; }
                 allVideos = data || [];
                 renderFeed();
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (err) { console.error(err); }
         }
 
-        async function renderFeed(videosToRender = null) {
+        function renderFeed(videosToRender = null) {
             let feed = document.getElementById('videoFeed');
             if (!feed) return;
             feed.innerHTML = '';
-
             let list = videosToRender || allVideos;
 
             if (!videosToRender) {
                 list = allVideos.filter(v => {
                     let creatorName = v.profiles ? v.profiles.username : v.creator;
-                    let matchesCategory = true;
-                    if (currentCategory === 'Trending') {
-                        // sorted by likes
-                    } else if (currentCategory !== 'All') {
-                        matchesCategory = (v.category === currentCategory || creatorName === currentCategory);
-                    }
+                    let matchesCategory = currentCategory === 'All' || v.category === currentCategory || creatorName === currentCategory || (currentCategory === 'Trending' && (v.likes || 0) > 0);
                     let query = searchQuery.toLowerCase();
-                    let matchesSearch = v.title.toLo
+                    let matchesSearch = v.title.toLowerCase().includes(query) || creatorName.toLowerCase().includes(query);
+                    return matchesCategory && matchesSearch;
+                });
+                if (currentCategory === 'Trending') list.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+            }
+
+            if (list.length === 0) {
+                feed.innerHTML = `<div class="col-span-2 text-center py-12 text-gray-400">No videos found.</div>`;
+                return;
+            }
+
+            list.forEach(v => {
+                let creatorName = v.profiles ? v.profiles.username : v.creator;
+                let isOwner = currentUser && v.user_id === currentUser.id;
+                let isSaved = savedVideoIds.has(v.id);
+
+                let card = document.createElement('div');
+                card.className = "bg-white dark:bg-gray-900 border rounded-2xl overflow-hidden shadow-sm flex flex-col";
+                card.innerHTML = `
+                    <div class="aspect-video bg-black"><video src="${v.url}" controls class="w-full h-full object-cover"></video></div>
+                    <div class="p-4 space-y-3">
+                        <h3 class="font-semibold">${v.title}</h3>
+                        <p onclick="viewProfile('${creatorName}')" class="text-sm text-gold-600 cursor-pointer">@${creatorName}</p>
+                        <div class="flex items-center justify-between text-xs pt-2 border-t">
+                            <button onclick="handleLike(${v.id}, ${v.likes || 0}, '${v.user_id}')" class="px-2 py-1 border rounded">❤️ ${v.likes || 0}</button>
+                            <button onclick="toggleSave(${v.id})" class="px-2 py-1 border rounded">${isSaved ? 'Saved' : 'Save'}</button>
+                            ${isOwner ? `<button onclick="deleteVideo(${v.id})" class="text-red-500">Delete</button>` : ''}
+                        </div>
+                    </div>
+                `;
+                feed.appendChild(card);
+            });
+        }
+
+        function showReelsFeed() {
+            let container = document.getElementById('dynamicContentArea');
+            if (!container) return;
+            container.innerHTML = `<h2 class="text-xl font-bold mb-4">⚡ Reels</h2><div class="flex flex-col items-center space-y-8" id="reelsContainer"></div>`;
+            let reelsContainer = document.getElementById('reelsContainer');
+            let reelsList = allVideos.filter(v => v.format === 'vertical');
+            if (reelsList.length === 0) reelsList = allVideos;
+
+            reelsList.forEach(v => {
+                let card = document.createElement('div');
+                card.className = "relative bg-black rounded-3xl overflow-hidden shadow-2xl w-full max-w-sm aspect-[9/16] flex items-center justify-center border";
+                card.innerHTML = `<video src="${v.url}" controls loop class="w-full h-full object-cover"></video>`;
+                reelsContainer.appendChild(card);
+            });
+        }
+
+        function filterByCategory(cat) { currentCategory = cat; renderFeed(); }
+        function searchVideos() { searchQuery = document.getElementById('searchInput').value; renderFeed(); }
+        function goHome() { document.getElementById('feedHeader').style.display = 'flex'; document.getElementById('dynamicContentArea').innerHTML = `<div id="videoFeed" class="grid grid-cols-1 sm:grid-cols-2 gap-6"></div>`; fetchVideosFromCloud(); }
+        
+        function openAuthModal(mode) {
+            isSignUpMode = (mode === 'signup');
+            document.getElementById('authTitle').innerText = isSignUpMode ? "Join GoldenNest" : "Sign In";
+            document.getElementById('authSubmitBtn').innerText = isSignUpMode ? "Create Account" : "Sign In";
+            document.getElementById('usernameFieldGroup').classList.toggle('hidden', !isSignUpMode);
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+        function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
+        function toggleAuthMode() { openAuthModal(isSignUpMode ? 'login' : 'signup'); }
+
+        function openUploadModal() { document.getElementById('uploadModal').classList.remove('hidden'); }
+        function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); }
+
+        async function handleAuthSubmit(event) {
+            event.preventDefault();
+            let email = document.getElementById('authEmail').value;
+            let password = document.getElementById('authPassword').value;
+            if (isSignUpMode) {
+                let username = document.getElementById('authUsername').value;
+                let { data, error } = await _supabase.auth.signUp({ email, password });
+                if (error) { alert(error.message); return; }
+                if (data.user) await _supabase.from('profiles').insert([{ id: data.user.id, username: username, bio: "Creator" }]);
+            } else {
+                let { error } = await _supabase.auth.signInWithPassword(
