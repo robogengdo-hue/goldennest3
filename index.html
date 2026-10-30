@@ -1,143 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoldenNest - Creator Media Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        gold: { 500: '#D4AF37', 600: '#AA8C2C' }
-                    }
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased min-h-screen flex flex-col">
-
-    <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div onclick="goHome()" class="flex items-center space-x-3 cursor-pointer">
-                <div class="w-10 h-10 rounded-xl bg-gold-500 flex items-center justify-center text-white font-bold text-xl shadow-md">G</div>
-                <span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Golden<span class="text-gold-600">Nest</span></span>
-            </div>
-
-            <div class="hidden md:flex flex-1 max-w-md mx-8">
-                <div class="relative w-full">
-                    <input type="text" id="searchInput" oninput="searchVideos()" placeholder="Search videos or tags..." class="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full py-2 pl-4 pr-10 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500">
-                    <span class="absolute right-3 top-2.5 text-gray-400">🔍</span>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-3">
-                <button onclick="showNotifications()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200">🔔</button>
-                <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200"><span id="themeIcon">🌙</span></button>
-                <button onclick="openUploadModal()" class="bg-gold-500 hover:bg-gold-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm">+ Create</button>
-                <div id="authNavArea" class="flex items-center space-x-3"></div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content Layout -->
-    <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-4 gap-8">
-        <aside class="hidden lg:block lg:col-span-1 space-y-2">
-            <a href="#" onclick="goHome(); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gold-50 dark:bg-gold-500/10 text-gold-600 font-semibold"><span>🏠</span> <span>Home Feed</span></a>
-            <a href="#" onclick="showReelsFeed(); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>⚡</span> <span>Reels</span></a>
-            <a href="#" onclick="filterByCategory('Trending'); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔥</span> <span>Trending</span></a>
-            <a href="#" onclick="showSavedVideos(); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔖</span> <span>Saved Posts</span></a>
-            <a href="#" onclick="showNotifications(); return false;" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔔</span> <span>Activity Feed</span></a>
-        </aside>
-
-        <section class="col-span-1 lg:col-span-3 space-y-6">
-            <div id="feedHeader" class="flex items-center space-x-2 overflow-x-auto pb-2">
-                <button onclick="filterByCategory('All')" class="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-4 py-1.5 rounded-full text-sm font-medium">All</button>
-                <button onclick="showReelsFeed()" class="bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium">⚡ Reels</button>
-                <button onclick="filterByCategory('Trending')" class="bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium">🔥 Trending</button>
-            </div>
-
-            <div id="dynamicContentArea" class="space-y-6">
-                <div id="loadingState" class="text-center py-12 text-gray-400">Loading GoldenNest cloud platform...</div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" id="videoFeed"></div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Auth Modal -->
-    <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div class="text-center pb-2 border-b border-gray-100 dark:border-gray-800">
-                <div class="w-12 h-12 rounded-2xl bg-gold-500 mx-auto flex items-center justify-center text-white font-bold text-2xl shadow-md mb-2">G</div>
-                <h3 id="authTitle" class="text-xl font-bold text-gray-900 dark:text-white">Welcome to GoldenNest</h3>
-            </div>
-            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3">
-                <div id="usernameFieldGroup" class="hidden">
-                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Username</label>
-                    <input type="text" id="authUsername" placeholder="e.g. mr_psycho" class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Email</label>
-                    <input type="email" id="authEmail" required placeholder="name@example.com" class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Password</label>
-                    <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm">
-                </div>
-                <button type="submit" id="authSubmitBtn" class="w-full bg-gold-500 hover:bg-gold-600 text-white py-2.5 rounded-xl text-sm font-semibold">Sign In</button>
-                <button type="button" onclick="toggleAuthMode()" id="authToggleBtn" class="w-full text-xs text-gold-600 hover:underline text-center">Don't have an account? Sign Up</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Upload Modal -->
-    <div id="uploadModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-lg font-bold">Upload Video</h3>
-                <button onclick="closeUploadModal()" class="text-gray-400 font-bold text-lg">&times;</button>
-            </div>
-            <form id="uploadForm" onsubmit="handleCloudBucketUpload(event)" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Title</label>
-                    <input type="text" id="videoTitle" required class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Description</label>
-                    <textarea id="videoDescription" rows="2" class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm"></textarea>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Category</label>
-                        <select id="videoCategory" class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm">
-                            <option value="Cinematic">Cinematic</option>
-                            <option value="Technology">Technology</option>
-                            <option value="Vlogs">Vlogs</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Format</label>
-                        <select id="videoFormat" class="w-full bg-gray-50 dark:bg-gray-800 border rounded-xl px-3 py-2 text-sm">
-                            <option value="horizontal">Standard (16:9)</option>
-                            <option value="vertical">Reel (9:16)</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Video File</label>
-                    <input type="file" id="videoFile" accept="video/*" required class="w-full text-sm">
-                </div>
-                <button type="submit" id="submitBtn" class="w-full bg-gold-500 text-white py-2.5 rounded-xl text-sm font-semibold">Upload Video</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Core Script -->
+<!-- Core Script -->
     <script>
         const SUPABASE_URL = 'https://oemydtxwalfjmluzykmr.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_gK1skiPXPysYi9wOiFjQzg_0vYEmg3I';
@@ -181,14 +42,21 @@
 
         async function initApp() {
             window.initTheme();
-            let { data: { session } } = await _supabase.auth.getSession();
-            if (session) {
-                currentUser = session.user;
-                await fetchProfile(currentUser.id);
-                await fetchSavedVideosList();
-                updateAuthUI();
-                fetchVideosFromCloud();
-            } else {
+            try {
+                let { data: { session } } = await _supabase.auth.getSession();
+                if (session && session.user) {
+                    currentUser = session.user;
+                    await fetchProfile(currentUser.id);
+                    await fetchSavedVideosList();
+                    updateAuthUI();
+                    fetchVideosFromCloud();
+                } else {
+                    openAuthModal('login');
+                    let loadingEl = document.getElementById('loadingState');
+                    if (loadingEl) loadingEl.innerHTML = "Please sign in to view GoldenNest.";
+                }
+            } catch (err) {
+                console.error("Auth session error:", err);
                 openAuthModal('login');
             }
         }
@@ -315,4 +183,69 @@
                 if (error) { alert(error.message); return; }
                 if (data.user) await _supabase.from('profiles').insert([{ id: data.user.id, username: username, bio: "Creator" }]);
             } else {
-                let { error } = await _supabase.auth.signInWithPassword(
+                let { error } = await _supabase.auth.signInWithPassword({ email, password });
+                if (error) { alert(error.message); return; }
+            }
+            closeAuthModal();
+            window.location.reload();
+        }
+
+        async function handleLogout() { await _supabase.auth.signOut(); window.location.reload(); }
+
+        async function handleCloudBucketUpload(event) {
+            event.preventDefault();
+            let file = document.getElementById('videoFile').files[0];
+            let fileName = `${Date.now()}_${file.name}`;
+            let { error } = await _supabase.storage.from('videos').upload(fileName, file);
+            if (error) { alert(error.message); return; }
+            let { data: publicUrlData } = _supabase.storage.from('videos').getPublicUrl(fileName);
+            await _supabase.from('videos').insert([{
+                title: document.getElementById('videoTitle').value,
+                description: document.getElementById('videoDescription').value,
+                creator: currentProfile.username,
+                user_id: currentUser.id,
+                category: document.getElementById('videoCategory').value,
+                format: document.getElementById('videoFormat').value,
+                url: publicUrlData.publicUrl,
+                likes: 0
+            }]);
+            closeUploadModal();
+            fetchVideosFromCloud();
+        }
+
+        async function handleLike(id, currentLikes, ownerUserId) {
+            await _supabase.from('videos').update({ likes: currentLikes + 1 }).eq('id', id);
+            fetchVideosFromCloud();
+        }
+
+        async function toggleSave(videoId) {
+            if (!currentUser) return;
+            if (savedVideoIds.has(videoId)) {
+                await _supabase.from('saved_videos').delete().eq('user_id', currentUser.id).eq('video_id', videoId);
+                savedVideoIds.delete(videoId);
+            } else {
+                await _supabase.from('saved_videos').insert([{ user_id: currentUser.id, video_id: videoId }]);
+                savedVideoIds.add(videoId);
+            }
+            renderFeed();
+        }
+
+        async function deleteVideo(id) {
+            if (!confirm("Delete video?")) return;
+            await _supabase.from('videos').delete().eq('id', id);
+            fetchVideosFromCloud();
+        }
+
+        async function showNotifications() {
+            let container = document.getElementById('dynamicContentArea');
+            container.innerHTML = `<h2 class="text-xl font-bold mb-4">🔔 Notifications</h2><p class="text-gray-400">Activity stream active.</p>`;
+        }
+
+        async function viewProfile(username) {
+            let container = document.getElementById('dynamicContentArea');
+            let { data: profileData } = await _supabase.from('profiles').select('*').eq('username', username).single();
+            container.innerHTML = `<h2 class="text-xl font-bold mb-2">@${username}</h2><p class="text-sm text-gray-500">${profileData ? (profileData.bio || 'No bio') : ''}</p>`;
+        }
+
+        window.onload = initApp;
+    </script>
