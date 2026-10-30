@@ -71,7 +71,7 @@
         </section>
     </main>
 
-    <!-- Auth Modal -->
+    <!-- Auth Modal with Bypass Button -->
     <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div class="text-center pb-2 border-b border-gray-100 dark:border-gray-800">
@@ -93,8 +93,9 @@
                 </div>
                 <button type="submit" id="authSubmitBtn" class="w-full bg-gold-500 hover:bg-gold-600 text-white py-2.5 rounded-xl text-sm font-semibold">Sign In</button>
                 
-                <div class="pt-2 text-center">
-                    <button type="button" onclick="toggleAuthMode()" id="authToggleBtn" class="text-sm font-medium text-gold-600 hover:underline">Don't have an account? Sign Up</button>
+                <div class="pt-2 text-center space-y-2">
+                    <button type="button" onclick="toggleAuthMode()" id="authToggleBtn" class="text-sm font-medium text-gold-600 hover:underline block w-full">Don't have an account? Sign Up</button>
+                    <button type="button" onclick="bypassAuth()" class="text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 py-2 rounded-xl w-full hover:bg-gray-200">🚀 Explore as Guest (Bypass Login)</button>
                 </div>
             </form>
         </div>
@@ -151,7 +152,7 @@
         const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentUser = null;
-        let currentProfile = null;
+        let currentProfile = { username: 'GuestCreator' };
         let allVideos = [];
         let savedVideoIds = new Set();
         let currentCategory = 'All';
@@ -180,25 +181,31 @@
             if (session && session.user) {
                 currentUser = session.user;
                 let { data: profile } = await _supabase.from('profiles').select('*').eq('id', currentUser.id).single();
-                currentProfile = profile;
+                if (profile) currentProfile = profile;
                 
                 let { data: saves } = await _supabase.from('saved_videos').select('video_id').eq('user_id', currentUser.id);
                 savedVideoIds = new Set(saves ? saves.map(s => s.video_id) : []);
 
                 updateAuthUI();
-                fetchVideosFromCloud();
                 document.getElementById('authModal').classList.add('hidden');
-            } else {
-                openAuthModal('login');
             }
+            fetchVideosFromCloud();
+        }
+
+        function bypassAuth() {
+            currentUser = { id: 'guest-mode' };
+            currentProfile = { username: 'GuestUser' };
+            document.getElementById('authModal').classList.add('hidden');
+            updateAuthUI();
+            fetchVideosFromCloud();
         }
 
         function updateAuthUI() {
             let authNavArea = document.getElementById('authNavArea');
-            if (currentUser && currentProfile) {
+            if (currentProfile && authNavArea) {
                 authNavArea.innerHTML = `
                     <div class="flex items-center space-x-3">
-                        <span onclick="viewProfile('${currentProfile.username}')" class="text-sm font-semibold text-gold-600 cursor-pointer hover:underline">@${currentProfile.username}</span>
+                        <span class="text-sm font-semibold text-gold-600">@${currentProfile.username}</span>
                         <button onclick="handleLogout()" class="text-xs bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full">Sign Out</button>
                     </div>
                 `;
@@ -232,13 +239,13 @@
             if (currentCategory === 'Trending') list.sort((a, b) => (b.likes || 0) - (a.likes || 0));
 
             if (list.length === 0) {
-                feed.innerHTML = `<div class="col-span-2 text-center py-12 text-gray-400">No videos found.</div>`;
+                feed.innerHTML = `<div class="col-span-2 text-center py-12 text-gray-400">No videos found. Upload one to start!</div>`;
                 return;
             }
 
             list.forEach(v => {
                 let creatorName = v.profiles ? v.profiles.username : v.creator;
-                let isOwner = currentUser && v.user_id === currentUser.id;
+                let isOwner = currentUser && currentUser.id !== 'guest-mode' && v.user_id === currentUser.id;
                 let isSaved = savedVideoIds.has(v.id);
 
                 let card = document.createElement('div');
@@ -298,15 +305,5 @@
         function toggleAuthMode() { openAuthModal(isSignUpMode ? 'login' : 'signup'); }
 
         function openUploadModal() {
-            if (!currentUser) { alert("Please sign in first."); openAuthModal('login'); return; }
-            document.getElementById('uploadModal').classList.remove('hidden');
-        }
-        function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); }
-
-        async function handleAuthSubmit(event) {
-            event.preventDefault();
-            let email = document.getElementById('authEmail').value;
-            let password = document.getElementById('authPassword').value;
-
-            if (isSignUpMode) {
-                let username = document.getElementById('authUsername').v
+            if (!currentUser) { openAuthModal('login'); return; }
+            document.getElementById('uploadModal').classLi
