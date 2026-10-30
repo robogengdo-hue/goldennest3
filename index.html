@@ -24,7 +24,7 @@
     <!-- Top Navigation Bar -->
     <header class="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm transition-colors duration-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.goHome()">
                 <div class="w-10 h-10 rounded-xl bg-gold-500 flex items-center justify-center text-white font-bold text-xl shadow-md">G</div>
                 <span class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Golden<span class="text-gold-600">Nest</span></span>
             </div>
@@ -32,19 +32,19 @@
             <!-- Search Bar -->
             <div class="hidden md:flex flex-1 max-w-md mx-8">
                 <div class="relative w-full">
-                    <input type="text" id="searchInput" oninput="searchVideos()" placeholder="Search videos, creators, or tags (#)..." class="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full py-2 pl-4 pr-10 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500 transition-all">
+                    <input type="text" id="searchInput" oninput="window.searchVideos()" placeholder="Search videos, creators, or tags (#)..." class="w-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full py-2 pl-4 pr-10 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500 transition-all">
                     <span class="absolute right-3 top-2.5 text-gray-400">🔍</span>
                 </div>
             </div>
 
             <div class="flex items-center space-x-3">
-                <button onclick="showNotifications()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all" title="Notifications">
+                <button onclick="window.showNotifications()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all" title="Notifications">
                     <span>🔔</span>
                 </button>
-                <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all" title="Toggle Theme">
+                <button onclick="window.toggleDarkMode()" class="w-9 h-9 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all" title="Toggle Theme">
                     <span id="themeIcon">🌙</span>
                 </button>
-                <button onclick="openUploadModal()" class="bg-gold-500 hover:bg-gold-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all">+ Create</button>
+                <button onclick="window.openUploadModal()" class="bg-gold-500 hover:bg-gold-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-sm transition-all">+ Create</button>
                 <div id="authNavArea" class="flex items-center space-x-3"></div>
             </div>
         </div>
@@ -53,25 +53,25 @@
     <!-- Main Content Layout -->
     <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-4 gap-8">
         <aside class="hidden lg:block lg:col-span-1 space-y-2">
-            <a href="#" onclick="goHome()" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gold-50 dark:bg-gold-500/10 text-gold-600 font-semibold"><span>🏠</span> <span>Home Feed</span></a>
-            <a href="#" onclick="showReelsFeed()" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>⚡</span> <span>Reels</span></a>
-            <a href="#" onclick="filterByCategory('Trending')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔥</span> <span>Trending</span></a>
-            <a href="#" onclick="showSavedVideos()" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔖</span> <span>Saved Posts</span></a>
-            <a href="#" onclick="showNotifications()" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔔</span> <span>Activity Feed</span></a>
-            <a href="#" onclick="filterByCategory('Cinematic')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🎬</span> <span>Cinematic</span></a>
-            <a href="#" onclick="filterByCategory('Technology')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>💻</span> <span>Technology</span></a>
-            <a href="#" onclick="filterByCategory('Vlogs')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🎥</span> <span>Vlogs</span></a>
+            <a href="#" onclick="window.goHome()" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gold-50 dark:bg-gold-500/10 text-gold-600 font-semibold"><span>🏠</span> <span>Home Feed</span></a>
+            <a href="#" onclick="window.showReelsFeed()" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>⚡</span> <span>Reels</span></a>
+            <a href="#" onclick="window.filterByCategory('Trending')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔥</span> <span>Trending</span></a>
+            <a href="#" onclick="window.showSavedVideos()" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔖</span> <span>Saved Posts</span></a>
+            <a href="#" onclick="window.showNotifications()" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🔔</span> <span>Activity Feed</span></a>
+            <a href="#" onclick="window.filterByCategory('Cinematic')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🎬</span> <span>Cinematic</span></a>
+            <a href="#" onclick="window.filterByCategory('Technology')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>💻</span> <span>Technology</span></a>
+            <a href="#" onclick="window.filterByCategory('Vlogs')" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-600 dark:text-gray-300 font-medium"><span>🎥</span> <span>Vlogs</span></a>
         </aside>
 
         <!-- Media Feed / Profile View -->
         <section class="col-span-1 lg:col-span-3 space-y-6">
             <div id="feedHeader" class="flex items-center space-x-2 overflow-x-auto pb-2">
-                <button onclick="filterByCategory('All')" class="category-btn bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap">All</button>
-                <button onclick="showReelsFeed()" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">⚡ Reels</button>
-                <button onclick="filterByCategory('Trending')" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">🔥 Trending</button>
-                <button onclick="filterByCategory('Cinematic')" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Cinematic</button>
-                <button onclick="filterByCategory('Technology')" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Technology</button>
-                <button onclick="filterByCategory('Vlogs')" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Vlogs</button>
+                <button onclick="window.filterByCategory('All')" class="category-btn bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap">All</button>
+                <button onclick="window.showReelsFeed()" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">⚡ Reels</button>
+                <button onclick="window.filterByCategory('Trending')" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">🔥 Trending</button>
+                <button onclick="window.filterByCategory('Cinematic')" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Cinematic</button>
+                <button onclick="window.filterByCategory('Technology')" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Technology</button>
+                <button onclick="window.filterByCategory('Vlogs')" class="category-btn bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all">Vlogs</button>
             </div>
 
             <div id="dynamicContentArea" class="space-y-6">
@@ -89,7 +89,7 @@
                 <h3 id="authTitle" class="text-xl font-bold text-gray-900 dark:text-white">Welcome to GoldenNest</h3>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Sign in or create an account to enter the platform.</p>
             </div>
-            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-3">
+            <form id="authForm" onsubmit="window.handleAuthSubmit(event)" class="space-y-3">
                 <div id="usernameFieldGroup" class="hidden">
                     <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Username / Handle</label>
                     <input type="text" id="authUsername" placeholder="e.g. mr_psycho" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500">
@@ -104,7 +104,7 @@
                 </div>
                 <div class="pt-2 flex flex-col space-y-2">
                     <button type="submit" id="authSubmitBtn" class="w-full bg-gold-500 hover:bg-gold-600 text-white py-2.5 rounded-xl text-sm font-semibold shadow-sm">Sign In</button>
-                    <button type="button" onclick="toggleAuthMode()" id="authToggleBtn" class="text-xs text-gold-600 hover:underline text-center">Don't have an account? Sign Up</button>
+                    <button type="button" onclick="window.toggleAuthMode()" id="authToggleBtn" class="text-xs text-gold-600 hover:underline text-center">Don't have an account? Sign Up</button>
                 </div>
             </form>
         </div>
@@ -115,9 +115,9 @@
         <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-800 pb-3">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white">Upload Video to Cloud</h3>
-                <button onclick="closeUploadModal()" class="text-gray-400 hover:text-gray-200 font-bold text-lg">&times;</button>
+                <button onclick="window.closeUploadModal()" class="text-gray-400 hover:text-gray-200 font-bold text-lg">&times;</button>
             </div>
-            <form id="uploadForm" onsubmit="handleCloudBucketUpload(event)" class="space-y-3">
+            <form id="uploadForm" onsubmit="window.handleCloudBucketUpload(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Video Title</label>
                     <input type="text" id="videoTitle" required placeholder="e.g. My Masterpiece" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:border-gold-500">
@@ -148,7 +148,7 @@
                     <input type="file" id="videoFile" accept="video/*" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 text-sm text-gray-900 dark:text-gray-100 focus:outline-none file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-gold-50 file:text-gold-600 hover:file:bg-gold-100 cursor-pointer">
                 </div>
                 <div class="pt-2 flex space-x-3">
-                    <button type="button" onclick="closeUploadModal()" class="flex-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 py-2.5 rounded-xl text-sm font-semibold">Cancel</button>
+                    <button type="button" onclick="window.closeUploadModal()" class="flex-1 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 py-2.5 rounded-xl text-sm font-semibold">Cancel</button>
                     <button type="submit" id="submitBtn" class="flex-1 bg-gold-500 hover:bg-gold-600 text-white py-2.5 rounded-xl text-sm font-semibold shadow-sm">Upload Video</button>
                 </div>
             </form>
@@ -162,7 +162,7 @@
         </div>
     </footer>
 
-    <!-- Core JavaScript Logic -->
+    <!-- Globally Bound JavaScript Logic -->
     <script>
         const SUPABASE_URL = 'https://oemydtxwalfjmluzykmr.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_gK1skiPXPysYi9wOiFjQzg_0vYEmg3I';
@@ -232,8 +232,8 @@
             if (currentUser && currentProfile) {
                 authNavArea.innerHTML = `
                     <div class="flex items-center space-x-3">
-                        <span onclick="viewProfile('${currentProfile.username}')" class="text-sm font-semibold text-gold-600 cursor-pointer hover:underline">@${currentProfile.username}</span>
-                        <button onclick="handleLogout()" class="text-xs bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-1.5 rounded-full text-gray-600 dark:text-gray-300 font-medium">Sign Out</button>
+                        <span onclick="window.viewProfile('${currentProfile.username}')" class="text-sm font-semibold text-gold-600 cursor-pointer hover:underline">@${currentProfile.username}</span>
+                        <button onclick="window.handleLogout()" class="text-xs bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 px-3 py-1.5 rounded-full text-gray-600 dark:text-gray-300 font-medium">Sign Out</button>
                     </div>
                 `;
             }
@@ -273,7 +273,4 @@
                         matchesCategory = (v.category === currentCategory || creatorName === currentCategory);
                     }
                     let query = searchQuery.toLowerCase();
-                    let matchesSearch = v.title.toLowerCase().includes(query) || 
-                                        creatorName.toLowerCase().includes(query) || 
-                                        (v.description && v.description.toLowerCase().includes(query));
-                    return matchesCategory
+                    let matchesSearch = v.title.toLowerCase().includes(query) ||
