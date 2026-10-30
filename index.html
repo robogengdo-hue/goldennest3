@@ -93,7 +93,6 @@
                 </div>
                 <button type="submit" id="authSubmitBtn" class="w-full bg-gold-500 hover:bg-gold-600 text-white py-2.5 rounded-xl text-sm font-semibold">Sign In</button>
                 
-                <!-- Fixed Visible Toggle Button -->
                 <div class="pt-2 text-center">
                     <button type="button" onclick="toggleAuthMode()" id="authToggleBtn" class="text-sm font-medium text-gold-600 hover:underline">Don't have an account? Sign Up</button>
                 </div>
@@ -308,5 +307,6 @@
             event.preventDefault();
             let email = document.getElementById('authEmail').value;
             let password = document.getElementById('authPassword').value;
+
             if (isSignUpMode) {
-                let
+                let username = document.getElementById('authUsername').v
